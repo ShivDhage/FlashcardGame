@@ -3,7 +3,7 @@
 # Description: A program which has two categories and subcategories from
 # which the user can choose to be tested on in the form of flashcards
 
-
+#hi
 
 import sys
 import logging

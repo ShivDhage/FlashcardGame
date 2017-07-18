@@ -7,10 +7,7 @@
 
 import sys
 import logging
-<<<<<<< HEAD
-=======
 #You might need this to get a random card for the user! But that's later on -PH
->>>>>>> i added a file
 from random import randint
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question, session
@@ -27,11 +24,8 @@ def start_flashcards():
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
     session.attributes['correct'] = 0  # how many flashcards the user got correct
 
-<<<<<<< HEAD
-=======
 #Here you added a bit of extra code. You could get rid of this line and originally say:
 # task_msg = 'Welcome...'
->>>>>>> i added a file
     task_msg = prefix
     session.attributes['state'] = 1
     return question(task_msg)
@@ -43,14 +37,11 @@ def all_done():
         #(reminder for group)set the current state when coding later
         msg = "Oh well, you could have studied for once in your life ... Goodbye."
 
-<<<<<<< HEAD
-    return statement(msg)
-=======
     return statement(msg)
 
 
 #This is something you have to add! I'll talk about it later today.
+#End comment
 
 if __name__ == '__main__':
     app.run(debug=True)
->>>>>>> i added a file

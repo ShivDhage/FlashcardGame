@@ -17,40 +17,44 @@ ask = Ask(app, "/")
 
 @ask.launch
 def start_flashcards():
+
     session.attributes['welcome'] = 1
     task_msg = 'Welcome to the Flash Card Skill... Are you ready to study?'
 
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
     session.attributes['correct'] = 0  # how many flashcards the user got correct
-    session.attributes['topic'] = ''
-#Here you added a bit of extra code. You could get rid of this line and originally say:
-# task_msg = 'Welcome...'
 
-    session.attributes['state'] = 'start'
-    return question(task_msg)
+    session.attributes['state'] = 'start' # sets state to 'start'
+    return question(task_msg) # alexa asks if you are ready
 
 
 @ask.intent("YesIntent")
 def choose_topic():
-    if  session.attributes['state'] == 'start':
+    if  session.attributes['state'] == 'start': # checks if state is 'start'
         topic_msg = 'Which topic would you like to choose: Dates or Capitals'
-        session.attributes['state'] == 'set_topic'
-        return question(topic_msg)
+        session.attributes['state'] = 'set_topic'
+        return question(topic_msg) # alexa asks you which topic you want to choose
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
+    topic_choice = str(topic)
     if(session.attributes['state'] == 'set_topic'):
-        if(topic.equals('Dates')):
+        if(topic_choice == ('Dates')): #(error message) alexa not recognizing dates try .equals or something else
             subtopic_msg = 'Which subtopic would you like to study: American History or World History '
-        else:
+        elif(topic_choice == ('Capitals')):  #(error message) alexa not recognizing dates try .equals or something else
             subtopic_msg = 'Which subtopic would you like to study: United States or World Countries'
         session.attributes['state'] = 'set_subtopic'
-        return question(subtopic_msg)
+    if(session.attributes['state'] == 'set_subtopic'):
+        if(topic_choice == 'American History'):
+            subtopic_msg = "You've picked American History. Do you want to continue?"
+        elif topic_choice == 'World History':
+            subtopic_msg = "You've picked World History. Do you want to continue?"
+    return question(subtopic_msg) # alexa asks you sub topic or if you wish to continue based on incoming state
+
 @ask.intent("NoIntent")
 def all_done():
-    # The user says no in the beginning
-    if session.attributes['state'] == 1:  # origin state
+    if session.attributes['state'] == 'start': # checks if state is 'start'
         #(reminder for group)set the current state when coding later
         msg = "Oh well, you could have studied for once in your life ... Goodbye."
         return statement(msg)

@@ -38,19 +38,22 @@ def choose_topic():
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
-    topic_choice = str(topic)
+    
     if(session.attributes['state'] == 'set_topic'):
-        if(topic_choice == ('Dates')): #(error message) alexa not recognizing dates try .equals or something else
+        if topic.upper() == 'DATES': #(error message) alexa not recognizing dates try .equals or something else
             subtopic_msg = 'Which subtopic would you like to study: American History or World History '
-        elif(topic_choice == ('Capitals')):  #(error message) alexa not recognizing dates try .equals or something else
+        elif(topic.upper() == ('CAPITALS')):  #(error message) alexa not recognizing dates try .equals or something else
             subtopic_msg = 'Which subtopic would you like to study: United States or World Countries'
         session.attributes['state'] = 'set_subtopic'
     if(session.attributes['state'] == 'set_subtopic'):
-        if(topic_choice == 'American History'):
-            subtopic_msg = "You've picked American History. Do you want to continue?"
-        elif topic_choice == 'World History':
-            subtopic_msg = "You've picked World History. Do you want to continue?"
+        if(topic.upper() == 'AMERICAN HISTORY'):
+            subtopic_msg = "You've picked American History. Is that the right topic?"
+        elif topic.upper() == 'WORLD HISTORY':
+            subtopic_msg = "You've picked World History. Is that the right topic?"
     return question(subtopic_msg) # alexa asks you sub topic or if you wish to continue based on incoming state
+    """
+    print(topic)
+    return statement(topic)"""
 
 @ask.intent("NoIntent")
 def all_done():

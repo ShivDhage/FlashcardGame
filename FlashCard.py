@@ -24,6 +24,8 @@ def start_flashcards():
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
     session.attributes['correct'] = 0  # how many flashcards the user got correct
+    session.attributes['topic'] = ''
+    session.attributes['subtopic'] = ''
 
     session.attributes['state'] = 'start' # sets state to 'start'
     return question(task_msg) # alexa asks if you are ready
@@ -35,22 +37,42 @@ def choose_topic():
         topic_msg = 'Which topic would you like to choose: Dates or Capitals'
         session.attributes['state'] = 'set_topic'
         return question(topic_msg) # alexa asks you which topic you want to choose
+    if session.attributes['state'] == 'check_topic':
+        if session.attributes['topic'] == 'DATES':
+            subtopic_msg = "Okay... Would you like American History or World History?"
+        if session.attributes['topic'] == "CAPITALS":
+            subtopic_msg = "Okay... Would you like United States or World Countries?"
+        session.attributes['state'] = 'set_subtopic'
+        return question(subtopic_msg)
+    if session.attributes['state'] == 'check_subtopic':
+        if session.attributes['subtopic'] == 'AMERICAN HISTORY':
+            #ask_question('')
+            return statement('american history question')
+        if session.attributes['subtopic'] == 'WORLD HISTORY':
+            return statement('world history question')
+            #ask_question('')
+    
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
     
     if(session.attributes['state'] == 'set_topic'):
         if topic.upper() == 'DATES': #(error message) alexa not recognizing dates try .equals or something else
-            subtopic_msg = 'Which subtopic would you like to study: American History or World History '
+            session.attributes['topic'] = 'DATES'
+            just_checking_msg = "You've picked dates. Is this correct?"
         elif(topic.upper() == ('CAPITALS')):  #(error message) alexa not recognizing dates try .equals or something else
-            subtopic_msg = 'Which subtopic would you like to study: United States or World Countries'
-        session.attributes['state'] = 'set_subtopic'
+            session.attributes['topic'] = 'CAPITALS'
+            just_checking_msg = "You've picked capitals. Is this correct?"
+        session.attributes['state'] = 'check_topic'
     if(session.attributes['state'] == 'set_subtopic'):
         if(topic.upper() == 'AMERICAN HISTORY'):
-            subtopic_msg = "You've picked American History. Is that the right topic?"
+            just_checking_msg = "You've picked American History. Is that the right topic?"
+            session.attributes['subtopic'] = 'AMERICAN HISTORY'
         elif topic.upper() == 'WORLD HISTORY':
-            subtopic_msg = "You've picked World History. Is that the right topic?"
-    return question(subtopic_msg) # alexa asks you sub topic or if you wish to continue based on incoming state
+            just_checking_msg = "You've picked World History. Is that the right topic?"
+            session.attributes['subtopic'] = 'WORLD HISTORY'
+        session.attributes['state'] = 'check_subtopic'
+    return question(just_checking_msg) # alexa asks you sub topic or if you wish to continue based on incoming state
     """
     print(topic)
     return statement(topic)"""

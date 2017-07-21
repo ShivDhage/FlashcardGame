@@ -1,0 +1,3 @@
+What is my favorite color?+green
+Where was I born?+Pennsylvania
+How old am I?+21

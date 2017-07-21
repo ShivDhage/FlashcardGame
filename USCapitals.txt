@@ -1,0 +1,26 @@
+
+What is the capital of Alabama	?+Montgomery
+What is the capital of Alaska?+Juneau
+What is the capital of California?+Sacramento
+What is the capital of New York?+Albany
+What is the capital of Texas?+Austin
+What is the capital of Arizona?+Phoenix
+What is the capital of Connecticut?+Hartford
+What is the capital of Florida?+Tallahassee
+What is the capital of Hawaii?+Honululu
+What is the capital of Illinois?+Springfield
+What is the capital of Iowa?+Des Moines
+What is the capital of Kentucky?+Frankfort
+What is the capital of Maine?+Augusta
+What is the capital of Massachusetts?+Boston
+What is the capital of Minnesota?+St. Paul
+What is the capital of Missouri?+Jefferson City
+What is the capital of Nebraska?+Lincoln
+What is the capital of New Hampshire?+Concord
+What is the capital of New Mexico?+Santa Fe
+What is the capital of North Carolina?+Raleigh
+What is the capital of North Dakota?+Bismarck
+What is the capital of Oklahoma?+Oklahoma City
+What is the capital of Pennsylvania?+Harrisburg
+What is the capital of Wisconsin?+Madison
+What is the capital of Rhode Island?+Providence

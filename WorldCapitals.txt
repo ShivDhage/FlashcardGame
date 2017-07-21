@@ -1,0 +1,25 @@
+What is the capital of America?+Washington, D.C. 
+What is the capital of China?+Beijing
+What is the capital of India?+New Delhi 
+What is the capital of Canada?+Ottawa 
+What is the capital of Argentina?+Buenos Aires
+What is the capital of Austria?+Vienna
+What is the capital of Bahamas?+Nassau
+What is the capital of Belgium?+Brussels
+What is the capital of Brazil?+Brasília
+What is the capital of Chile?+Santiago
+What is the capital of Costa Rica?+San José
+What is the capital of Cuba?+Havana
+What is the capital of Dominican Republic?+Santo Domingo 
+What is the capital of Egypt?+Cairo
+What is the capital of Ethiopia?+Addis Ababa
+What is the capital of France?+Paris
+What is the capital of Germany?+Berlin
+What is the capital of Greece?+Athens
+What is the capital of Hungary?+Budapest
+What is the capital of Japan?+Tokyo
+What is the capital of Italy?+Rome
+What is the capital of Zimbabwe?+Harare
+What is the capital of Spain?+Madrid
+What is the capital of South Korea?+Seoul
+What is the capital of Russia?+Moscow

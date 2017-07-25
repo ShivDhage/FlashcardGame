@@ -17,7 +17,7 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill...Anytime in the game say change topic or change subtopic to change those respective elements... Are you ready to study?'
 
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
@@ -84,27 +84,34 @@ def choose_subtopic(topic):
         session.attributes['state'] = 'check_subtopic'
 
     return question(just_checking_msg)
-    """
-    print(topic)
-    return statement(topic)"""
+
+@ask.intent("ChangeTopicIntent")
+def change_topic_subtopic(change):
+    print(change)
+    if change.upper() == 'CHANGE TOPIC':
+        session.attributes['state'] = 'start'
+        msg = "Do you wish to change your topic? (Saying no will end the session)"
+    if change.upper() == "CHANGE SUBTOPIC":
+        session.attributes['state'] = 'check_topic'
+        msg = "Do you wish to change your subtopic"
+    return question(msg)
 
 @ask.intent("NoIntent")
 def all_done():
     if session.attributes['state'] == 'start':
-        session.attributes['state'] == 'end'
+        session.attributes['state'] = 'end'
         msg = "Oh well, you could have studied for once in your life ... Goodbye."
         return statement(msg)
 
     if session.attributes['state'] == 'check_topic':
-        session.attributes['state'] == 'start'
+        session.attributes['state'] = 'start'
         msg = "Do you wish to change your topic?"
         return question(msg)
 
     if session.attributes['state'] == 'check_subtopic':
-        session.attributes['state'] == 'check_topic'
+        session.attributes['state'] = 'check_topic'
         msg = "Do you wish to change your subtopic"
-        return statement(msg)
-
+        return question(msg)
 
 
 if __name__ == '__main__':

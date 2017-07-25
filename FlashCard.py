@@ -3,11 +3,9 @@
 # Description: A program which has two categories and subcategories from
 # which the user can choose to be tested on in the form of flashcards
 
-#hi
 
 import sys
 import logging
-#You might need this to get a random card for the user! But that's later on -PH
 from random import randint
 from flask import Flask, render_template
 from flask_ask import Ask, statement, question, session
@@ -24,19 +22,19 @@ def start_flashcards():
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
     session.attributes['correct'] = 0  # how many flashcards the user got correct
-    session.attributes['topic'] = ''
-    session.attributes['subtopic'] = ''
+    session.attributes['topic'] = '' # the topic the user has chosen
+    session.attributes['subtopic'] = '' # the subtopic the user has chosen
 
-    session.attributes['state'] = 'start' # sets state to 'start'
-    return question(task_msg) # alexa asks if you are ready
+    session.attributes['state'] = 'start'
+    return question(task_msg)
 
 
 @ask.intent("YesIntent")
 def choose_topic():
-    if  session.attributes['state'] == 'start': # checks if state is 'start'
+    if session.attributes['state'] == 'start':
         topic_msg = 'Which topic would you like to choose: Dates or Capitals'
         session.attributes['state'] = 'set_topic'
-        return question(topic_msg) # alexa asks you which topic you want to choose
+        return question(topic_msg)
     if session.attributes['state'] == 'check_topic':
         if session.attributes['topic'] == 'DATES':
             subtopic_msg = "Okay... Would you like American History or World History?"
@@ -47,46 +45,67 @@ def choose_topic():
     if session.attributes['state'] == 'check_subtopic':
         if session.attributes['subtopic'] == 'AMERICAN HISTORY':
             #ask_question('')
-            return statement('american history question')
-        if session.attributes['subtopic'] == 'WORLD HISTORY':
-            return statement('world history question')
+            return statement('American History question')
+        elif session.attributes['subtopic'] == 'WORLD HISTORY':
+            # ask_question('')
+            return statement('World History question')
+        if session.attributes['subtopic'] == 'UNITED STATES':
             #ask_question('')
+            return statement('United States question')
+        elif session.attributes['subtopic'] == 'WORLD COUNTRIES':
+            #ask_question('')
+            return statement('World Countries question')
     
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
-    
-    if(session.attributes['state'] == 'set_topic'):
-        if topic.upper() == 'DATES': #(error message) alexa not recognizing dates try .equals or something else
+    if session.attributes['state'] == 'set_topic':
+        if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
             just_checking_msg = "You've picked dates. Is this correct?"
-        elif(topic.upper() == ('CAPITALS')):  #(error message) alexa not recognizing dates try .equals or something else
+        elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
             just_checking_msg = "You've picked capitals. Is this correct?"
         session.attributes['state'] = 'check_topic'
-    if(session.attributes['state'] == 'set_subtopic'):
-        if(topic.upper() == 'AMERICAN HISTORY'):
+
+    if session.attributes['state'] == 'set_subtopic':
+        if topic.upper() == 'AMERICAN HISTORY':
             just_checking_msg = "You've picked American History. Is that the right topic?"
             session.attributes['subtopic'] = 'AMERICAN HISTORY'
         elif topic.upper() == 'WORLD HISTORY':
             just_checking_msg = "You've picked World History. Is that the right topic?"
             session.attributes['subtopic'] = 'WORLD HISTORY'
+        if topic.upper() == 'UNITED STATES':
+            just_checking_msg = "You've picked United States. Is that the right topic?"
+            session.attributes['subtopic'] = 'UNITED STATES'
+        elif topic.upper() == 'WORLD COUNTRIES':
+            just_checking_msg = "You've picked World Countries. Is that the right topic?"
+            session.attributes['subtopic'] = 'WORLD COUNTRIES'
         session.attributes['state'] = 'check_subtopic'
-    return question(just_checking_msg) # alexa asks you sub topic or if you wish to continue based on incoming state
+
+    return question(just_checking_msg)
     """
     print(topic)
     return statement(topic)"""
 
 @ask.intent("NoIntent")
 def all_done():
-    if session.attributes['state'] == 'start': # checks if state is 'start'
-        #(reminder for group)set the current state when coding later
+    if session.attributes['state'] == 'start':
+        session.attributes['state'] == 'end'
         msg = "Oh well, you could have studied for once in your life ... Goodbye."
         return statement(msg)
 
+    if session.attributes['state'] == 'check_topic':
+        session.attributes['state'] == 'start'
+        msg = "Do you wish to change your topic?"
+        return question(msg)
 
-#This is something you have to add! I'll talk about it later today.
-#End comment
+    if session.attributes['state'] == 'check_subtopic':
+        session.attributes['state'] == 'check_topic'
+        msg = "Do you wish to change your subtopic"
+        return statement(msg)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

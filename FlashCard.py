@@ -26,6 +26,8 @@ def start_flashcards():
     session.attributes['correct'] = 0  # how many flashcards the user got correct
     session.attributes['topic'] = ''
     session.attributes['subtopic'] = ''
+    session.attributes['question'] = ''
+    session.attributes['answer'] = ''
 
     session.attributes['state'] = 'start' # sets state to 'start'
     return question(task_msg) # alexa asks if you are ready
@@ -46,11 +48,10 @@ def choose_topic():
         return question(subtopic_msg)
     if session.attributes['state'] == 'check_subtopic':
         if session.attributes['subtopic'] == 'AMERICAN HISTORY':
-            #ask_question('')
-            return statement('american history question')
+            q = get_question('USDates.txt')
         if session.attributes['subtopic'] == 'WORLD HISTORY':
-            return statement('world history question')
-            #ask_question('')
+            q = get_question('WorldHistoryDates.txt')
+        return question(q)
     
 
 @ask.intent("SetTopicIntent")
@@ -77,16 +78,33 @@ def choose_subtopic(topic):
     print(topic)
     return statement(topic)"""
 
+@ask.intent("CheckAnswerIntent")
+def checkAnswer(answer):
+
 @ask.intent("NoIntent")
 def all_done():
     if session.attributes['state'] == 'start': # checks if state is 'start'
         #(reminder for group)set the current state when coding later
         msg = "Oh well, you could have studied for once in your life ... Goodbye."
         return statement(msg)
+    """"""
+    if session.attributes['state'] == 'question':
+        return statement(session.attributes['answer'])
 
-
-#This is something you have to add! I'll talk about it later today.
-#End comment
+def get_question(file_name):
+    f = open(file_name, 'r', encoding = 'utf-8')
+    lines = f.readlines()
+    qa = [tuple(qa.strip().split('+')) for qa in lines]
+    index = randint(0,24)
+    q = qa[index][0]
+    a = qa[index][1]
+    session.attributes['question'] = q
+    session.attributes['answer'] = a
+    session.attributes['state'] = 'question'
+    return q
+    
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
+

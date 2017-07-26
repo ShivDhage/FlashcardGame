@@ -55,7 +55,7 @@ def choose_topic():
         elif session.attributes['subtopic'] == 'WORLD COUNTRIES':
             #ask_question('')
             return statement('World Countries question')
-    
+
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):

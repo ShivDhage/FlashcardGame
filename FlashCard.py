@@ -44,17 +44,10 @@ def choose_topic():
         return question(subtopic_msg)
     if session.attributes['state'] == 'check_subtopic':
         if session.attributes['subtopic'] == 'AMERICAN HISTORY':
-            #ask_question('')
-            return statement('American History question')
-        elif session.attributes['subtopic'] == 'WORLD HISTORY':
-            # ask_question('')
-            return statement('World History question')
-        if session.attributes['subtopic'] == 'UNITED STATES':
-            #ask_question('')
-            return statement('United States question')
-        elif session.attributes['subtopic'] == 'WORLD COUNTRIES':
-            #ask_question('')
-            return statement('World Countries question')
+            q = get_question('USDates.txt')
+        if session.attributes['subtopic'] == 'WORLD HISTORY':
+            q = get_question('WorldHistoryDates.txt')
+        return question(q)
 
 
 @ask.intent("SetTopicIntent")

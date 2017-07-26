@@ -1,5 +1,4 @@
-
-What is the capital of Alabama	?+Montgomery
+What is the capital of Alabama?+Montgomery
 What is the capital of Alaska?+Juneau
 What is the capital of California?+Sacramento
 What is the capital of New York?+Albany

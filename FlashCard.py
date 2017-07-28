@@ -17,7 +17,7 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill...Anytime in the game say change topic or change subtopic to change those respective elements... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill...Say change topic or change subtopic anytime... Are you ready to study?'
 
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
@@ -35,52 +35,40 @@ def choose_topic():
         topic_msg = 'Which topic would you like to choose: Dates or Capitals'
         session.attributes['state'] = 'set_topic'
         return question(topic_msg)
-    if session.attributes['state'] == 'check_topic':
-        if session.attributes['topic'] == 'DATES':
-            subtopic_msg = "Okay... Would you like American History or World History?"
-        if session.attributes['topic'] == "CAPITALS":
-            subtopic_msg = "Okay... Would you like United States or World Countries?"
-        session.attributes['state'] = 'set_subtopic'
-        return question(subtopic_msg)
-    if session.attributes['state'] == 'check_subtopic':
-        if session.attributes['subtopic'] == 'AMERICAN HISTORY':
-            q = get_question('USDates.txt')
-        if session.attributes['subtopic'] == 'WORLD HISTORY':
-            q = get_question('WorldHistoryDates.txt')
-        return question(q)
-
-
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
         if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
-            just_checking_msg = "You've picked dates. Is this correct?"
+            subtopic_msg = "You've picked dates.  Would you like American History or World History?"
         elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
-            just_checking_msg = "You've picked capitals. Is this correct?"
-        session.attributes['state'] = 'check_topic'
-
+            subtopic_msg = "You've picked capitals.  Would you like United States or World Countries?"
+        session.attributes['state'] = 'set_subtopic'
+        return question(subtopic_msg)
     if session.attributes['state'] == 'set_subtopic':
         if topic.upper() == 'AMERICAN HISTORY':
-            just_checking_msg = "You've picked American History. Is that the right topic?"
+            just_checking_msg = "You've picked American History."
             session.attributes['subtopic'] = 'AMERICAN HISTORY'
+            q = get_question('USDates.txt')
         elif topic.upper() == 'WORLD HISTORY':
-            just_checking_msg = "You've picked World History. Is that the right topic?"
+            just_checking_msg = "You've picked World History."
             session.attributes['subtopic'] = 'WORLD HISTORY'
+            q = get_question('WorldHistoryDates.txt')
         if topic.upper() == 'UNITED STATES':
-            just_checking_msg = "You've picked United States. Is that the right topic?"
+            just_checking_msg = "You've picked United States."
             session.attributes['subtopic'] = 'UNITED STATES'
+            q = get_question('USCapitals.txt')
         elif topic.upper() == 'WORLD COUNTRIES':
-            just_checking_msg = "You've picked World Countries. Is that the right topic?"
+            just_checking_msg = "You've picked World Countries."
             session.attributes['subtopic'] = 'WORLD COUNTRIES'
-        session.attributes['state'] = 'check_subtopic'
+            q = get_question('WorldCapitals.txt')
+        session.attributes['state'] = 'ask_question'
+        return question(just_checking_msg + " " + q)
 
-    return question(just_checking_msg)
 
 @ask.intent("ChangeTopicIntent")
 def change_topic_subtopic(change):
-    print(change)
     if change.upper() == 'CHANGE TOPIC':
         session.attributes['state'] = 'start'
         msg = "Do you wish to change your topic? (Saying no will end the session)"
@@ -88,6 +76,13 @@ def change_topic_subtopic(change):
         session.attributes['state'] = 'check_topic'
         msg = "Do you wish to change your subtopic"
     return question(msg)
+
+@ask.intent("CheckAnswerIntent")
+def checkAnswer(answer):
+    if session.attributes['answer'] == answer:
+        return statement("True")
+    else:
+        return statement("False")
 
 @ask.intent("NoIntent")
 def all_done():
@@ -106,6 +101,21 @@ def all_done():
         msg = "Do you wish to change your subtopic"
         return question(msg)
 
+    if session.attributes['state'] == 'question':
+        return statement(session.attributes['answer'])
+
+
+def get_question(file_name):
+    with open(file_name, 'r', encoding = 'utf-8') as f:
+        lines = f.readlines()
+    qa = [tuple(qa.strip().split('+')) for qa in lines]
+    index = randint(0,24)
+    q = qa[index][0]
+    a = qa[index][1]
+    session.attributes['question'] = q
+    session.attributes['answer'] = a
+    session.attributes['state'] = 'question'
+    return q
 
 if __name__ == '__main__':
     app.run(debug=True)

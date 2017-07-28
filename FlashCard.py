@@ -24,6 +24,8 @@ def start_flashcards():
     session.attributes['correct'] = 0  # how many flashcards the user got correct
     session.attributes['topic'] = '' # the topic the user has chosen
     session.attributes['subtopic'] = '' # the subtopic the user has chosen
+    session.attributes['fileName'] = ''
+    session.attributes['fileList'] = []
 
     session.attributes['state'] = 'start'
     return question(task_msg)
@@ -50,21 +52,32 @@ def choose_subtopic(topic):
         if topic.upper() == 'AMERICAN HISTORY':
             just_checking_msg = "You've picked American History."
             session.attributes['subtopic'] = 'AMERICAN HISTORY'
-            q = get_question('USDates.txt')
+            session.attributes['fileName'] = 'USDates.txt'
+            session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD HISTORY':
             just_checking_msg = "You've picked World History."
             session.attributes['subtopic'] = 'WORLD HISTORY'
-            q = get_question('WorldHistoryDates.txt')
+            session.attributes['fileName'] = 'WorldHistoryDates.txt'
+            session.attributes['fileList'] = get_question(session.attributes['fileName'])
         if topic.upper() == 'UNITED STATES':
             just_checking_msg = "You've picked United States."
             session.attributes['subtopic'] = 'UNITED STATES'
-            q = get_question('USCapitals.txt')
+            session.attributes['fileName'] = 'USCapitals.txt'
+            session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD COUNTRIES':
             just_checking_msg = "You've picked World Countries."
             session.attributes['subtopic'] = 'WORLD COUNTRIES'
-            q = get_question('WorldCapitals.txt')
+            session.attributes['fileName'] = 'WorldCapitals.txt'
+            session.attributes['fileList'] = get_question(session.attributes['fileName'])
         session.attributes['state'] = 'ask_question'
-        return question(just_checking_msg + " " + q)
+        return question(just_checking_msg + " " + ask_question())
+
+def ask_question():
+    index = randint(0,len(session.attributes['fileList'])-1)
+    q, a = session.attributes['fileList'].pop(index)
+    session.attributes['answer'] = a
+    session.attributes['state'] = 'question'
+    return q
 
 
 @ask.intent("ChangeTopicIntent")
@@ -80,10 +93,20 @@ def change_topic_subtopic(change):
 @ask.intent("CheckAnswerIntent")
 def checkAnswer(answer):
     if session.attributes['answer'] == answer:
-        return statement("True")
+        session.attributes['correct'] += 1
+        session.attributes['repetitions'] += 1
+        if session.attributes['repetitions'] < 5:
+            return question("True." + " " + ask_question())
+        else:
+            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
+    # string interpolation %
     else:
-        return statement("False")
-
+        session.attributes['repetitions'] += 1
+        if session.attributes['repetitions'] < 5:
+            return question("False." + " " + ask_question())
+        else:
+            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
+            # string interpolation %
 @ask.intent("NoIntent")
 def all_done():
     if session.attributes['state'] == 'start':
@@ -112,10 +135,9 @@ def get_question(file_name):
     index = randint(0,24)
     q = qa[index][0]
     a = qa[index][1]
-    session.attributes['question'] = q
     session.attributes['answer'] = a
     session.attributes['state'] = 'question'
-    return q
+    return qa
 
 if __name__ == '__main__':
     app.run(debug=True)

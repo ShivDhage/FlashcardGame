@@ -22,8 +22,8 @@ def start_flashcards():
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
     session.attributes['correct'] = 0  # how many flashcards the user got correct
-    session.attributes['topic'] = '' # the topic the user has chosen
-    session.attributes['subtopic'] = '' # the subtopic the user has chosen
+    session.attributes['topic'] = ''  # the topic the user has chosen
+    session.attributes['subtopic'] = ''  # the subtopic the user has chosen
     session.attributes['fileName'] = ''
     session.attributes['fileList'] = []
 
@@ -37,6 +37,14 @@ def choose_topic():
         topic_msg = 'Which topic would you like to choose: Dates or Capitals'
         session.attributes['state'] = 'set_topic'
         return question(topic_msg)
+    if session.attributes['state'] == 'set_topic':
+        if session.attributes['topic'] == 'DATES':
+            subtopic_msg = "Would you like American History or World History?"
+        elif session.attributes['topic'] == 'CAPITALS':
+            subtopic_msg = "Would you like United States or World Countries?"
+        session.attributes['state'] = 'set_subtopic'
+        return question(subtopic_msg)
+
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
@@ -72,6 +80,7 @@ def choose_subtopic(topic):
         session.attributes['state'] = 'ask_question'
         return question(just_checking_msg + " " + ask_question())
 
+
 def ask_question():
     index = randint(0,len(session.attributes['fileList'])-1)
     q, a = session.attributes['fileList'].pop(index)
@@ -86,12 +95,13 @@ def change_topic_subtopic(change):
         session.attributes['state'] = 'start'
         msg = "Do you wish to change your topic? (Saying no will end the session)"
     if change.upper() == "CHANGE SUBTOPIC":
-        session.attributes['state'] = 'check_topic'
+        session.attributes['state'] = 'set_topic'
         msg = "Do you wish to change your subtopic"
     return question(msg)
 
+
 @ask.intent("CheckAnswerIntent")
-def checkAnswer(answer):
+def check_answer(answer):
     if session.attributes['answer'] == answer:
         session.attributes['correct'] += 1
         session.attributes['repetitions'] += 1
@@ -107,6 +117,8 @@ def checkAnswer(answer):
         else:
             return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
             # string interpolation %
+
+
 @ask.intent("NoIntent")
 def all_done():
     if session.attributes['state'] == 'start':

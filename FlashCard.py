@@ -26,6 +26,7 @@ def start_flashcards():
     session.attributes['subtopic'] = ''  # the subtopic the user has chosen
     session.attributes['fileName'] = ''
     session.attributes['fileList'] = []
+    session.attributes['tryAgain'] = 0 
 
     session.attributes['state'] = 'start'
     return question(task_msg)
@@ -44,6 +45,10 @@ def choose_topic():
             subtopic_msg = "Would you like United States or World Countries?"
         session.attributes['state'] = 'set_subtopic'
         return question(subtopic_msg)
+    if session.attributes['state'] == 'tryAgain':
+        session.attributes['tryAgain'] += 1
+        question = session.attributes['question']
+        return question(question)
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
@@ -84,6 +89,7 @@ def choose_subtopic(topic):
 def ask_question():
     index = randint(0,len(session.attributes['fileList'])-1)
     q, a = session.attributes['fileList'].pop(index)
+    session.attributes['question'] = q
     session.attributes['answer'] = a
     session.attributes['state'] = 'question'
     return q
@@ -111,9 +117,14 @@ def check_answer(answer):
             return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
     # string interpolation %
     else:
+        try_again_msg = 'Do you want to try again?'
         session.attributes['repetitions'] += 1
         if session.attributes['repetitions'] < 5:
-            return question("False." + " " + ask_question())
+            if session.attributes['tryAgain'] < 2:
+                session.attributes['state'] = 'tryAgain'
+                return question("False." + try_again_msg)
+            else:
+                return question("False." + " " + ask_question())
         else:
             return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
             # string interpolation %
@@ -138,6 +149,9 @@ def all_done():
 
     if session.attributes['state'] == 'question':
         return statement(session.attributes['answer'])
+    
+    if session.attributes['state'] == 'tryAgain':
+        return question(ask_question())
 
 
 @ask.intent("AMAZON.CancelIntent")

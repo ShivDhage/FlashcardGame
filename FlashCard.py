@@ -17,7 +17,7 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill...Say change topic or change subtopic anytime... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill...Say change topic, change subtopic, or cancel, pause, resume, or restart anytime... Are you ready to study?'
 
     session.attributes['state'] = 'start'  # conversation state we are in
     session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
@@ -140,8 +140,29 @@ def all_done():
         return statement(session.attributes['answer'])
 
 
+@ask.intent("AMAZON.CancelIntent")
+def end_game():
+    end_msg = "Thanks for playing"
+    return statement(end_msg)
+
+
+@ask.intent("AMAZON.PauseIntent")
+def pause_game():
+    return 42
+
+
+@ask.intent("AMAZON.ResumeIntent")
+def resume_game():
+    return 42
+
+
+@ask.intent("AMAZON.StartOverIntent")
+def repeat_game():
+    return 42
+
+
 def get_question(file_name):
-    with open(file_name, 'r', encoding = 'utf-8') as f:
+    with open(file_name, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     qa = [tuple(qa.strip().split('+')) for qa in lines]
     index = randint(0,24)

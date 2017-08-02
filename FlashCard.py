@@ -115,7 +115,7 @@ def check_answer(answer):
         if session.attributes['repetitions'] < 5:
             return question("True." + " " + ask_question())
         else:
-            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
+            return statement("Your correct number of answers is " +str(session.attributes['correct']) + 'out of five. Goodbye.')
     # string interpolation %
     else:
         try_again_msg = 'Do you want to try again?'
@@ -127,7 +127,7 @@ def check_answer(answer):
             else:
                 return question("False." + " " + ask_question())
         else:
-            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
+            return statement("Your correct number of answers is " +str(session.attributes['correct']) + 'out of five. Goodbye.')
             # string interpolation %
 
 

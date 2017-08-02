@@ -161,16 +161,6 @@ def end_game():
     return statement(end_msg)
 
 
-@ask.intent("AMAZON.PauseIntent")
-def pause_game():
-    return 42
-
-
-@ask.intent("AMAZON.ResumeIntent")
-def resume_game():
-    return 42
-
-
 @ask.intent("AMAZON.StartOverIntent")
 def repeat_game():
     return 42

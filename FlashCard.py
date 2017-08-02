@@ -47,8 +47,9 @@ def choose_topic():
         return question(subtopic_msg)
     if session.attributes['state'] == 'tryAgain':
         session.attributes['tryAgain'] += 1
-        question = session.attributes['question']
-        return question(question)
+        repeat_question = session.attributes['question']
+        return question(repeat_question)
+
 
 @ask.intent("SetTopicIntent")
 def choose_subtopic(topic):
@@ -122,7 +123,7 @@ def check_answer(answer):
         if session.attributes['repetitions'] < 5:
             if session.attributes['tryAgain'] < 2:
                 session.attributes['state'] = 'tryAgain'
-                return question("False." + try_again_msg)
+                return question("False." + " " + try_again_msg)
             else:
                 return question("False." + " " + ask_question())
         else:

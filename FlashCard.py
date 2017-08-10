@@ -62,10 +62,10 @@ def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
         if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
-            subtopic_msg = "Great  Dates...Would you like American History or World History?"
+            subtopic_msg = "Great,  Dates...Would you like American History or World History?"
         elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
-            subtopic_msg = "Great  Capitals...Would you like United States or World Countries?"
+            subtopic_msg = "Great,  Capitals...Would you like United States or World Countries?"
         session.attributes['state'] = 'set_subtopic'
         return question(subtopic_msg)
     if session.attributes['state'] == 'set_subtopic':
@@ -107,16 +107,16 @@ def change_topic_subtopic(change):
     if change.upper() == 'CHANGE TOPIC':
         resetVars()
         session.attributes['state'] = 'set_topic'
-        msg = "  sure  Which topic would you like: Dates or Capitals"
+        msg = "  Sure,  Which topic would you like: Dates or Capitals"
     if change.upper() == "CHANGE SUBTOPIC":
         topic = session.attributes['topic']
         resetVars()
         session.attributes['topic'] = topic
         session.attributes['state'] = 'set_subtopic'
         if session.attributes['topic'].upper() == "DATES":
-            msg = "  sure  Would you like American History or World History?"
+            msg = "  Sure,  Would you like American History or World History?"
         elif session.attributes['topic'].upper() == "CAPITALS":
-            msg = "  sure  Would you like United States or World Countries?"
+            msg = "  Sure,  Would you like United States or World Countries?"
     return question(msg)
 
 
@@ -132,17 +132,27 @@ def check_answer(answer):
                 return question("Good Job, that's correct." + " On to the next question..." + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
-                    session.attributes['state'] = 'start'
-                    return question("...Alright  The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    correct = session.attributes['correct']
+                    resetVars()
+                    return question("...Alright,  The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
-                    session.attributes['state'] = 'start'
-                    return question("...Great Job  The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    correct = session.attributes['correct']
+                    resetVars()
+                    return question("...Great Job,  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
 
         # string interpolation %
         else:
             try_again_msg = 'Do you want to try again?'
             if not session.attributes['state'] == 'tryAgain':
                 session.attributes['repetitions'] += 1
+            if session.attributes['repetitions'] == 6:
+                if session.attributes['tryAgain'] < 2:
+                    session.attributes['state'] = 'tryAgain'
+                    return question("I'm sorry, that's not correct..." + " " + try_again_msg)
+                else:
+                    correct = session.attributes['correct']
+                    resetVars()
+                    return question("... I'm sorry, that's the wrong answer.  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
             if session.attributes['repetitions'] < 6:
                 if session.attributes['tryAgain'] < 2:
                     session.attributes['state'] = 'tryAgain'
@@ -152,16 +162,17 @@ def check_answer(answer):
                     return question("I'm sorry, that's not correct." + " The correct answer is " + session.attributes['answer'] + "... On to the next question... " + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
-                    session.attributes['state'] = 'start'
-                    return question("...Alright  The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    correct = session.attributes['correct']
+                    resetVars()
+                    return question("...Alright. The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
-                    session.attributes['state'] = 'start'
-                    return question("...Great Job  The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    correct = session.attributes['correct']
+                    resetVars()
+                    return question("...Great Job.  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
                 # string interpolation %
     else:
-        session.attributes['state'] = 'start'
         resetVars()
-        return question("Sorry I didn't understand that... Do you wish to restart the game")
+        return question("Sorry, I didn't understand that... Do you wish to restart the game")
 
 
 @ask.intent("NoIntent")
@@ -196,7 +207,6 @@ def end_game():
 
 @ask.intent("AMAZON.StartOverIntent")
 def repeat_game():
-    session.attributes['state'] = 'start'
     resetVars()
     return question("Do you wish to start over (Saying no will end the study session)")
 
@@ -205,11 +215,6 @@ def get_question(file_name):
     with open(file_name, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     qa = [tuple(qa.strip().split('+')) for qa in lines]
-    """index = randint(0,24)
-    q = qa[index][0]
-    a = qa[index][1]
-    session.attributes['answer'] = a
-    session.attributes['state'] = 'question'"""
     return qa
 
 if __name__ == '__main__':

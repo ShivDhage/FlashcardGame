@@ -206,7 +206,8 @@ def all_done():
         return question("...Alright. The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
 
     if session.attributes['state'] == 'tryAgain':
-        return question("Alright, next question..." + ask_question())
+        answer = session.attributes['answer']
+        return question("Alright, The correct answer is" + str(answer) + "...Next question..." + ask_question())
 
 
 @ask.intent("AMAZON.CancelIntent")

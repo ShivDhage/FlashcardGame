@@ -125,6 +125,10 @@ def check_answer(answer):
     print(answer)
     if session.attributes['state'] == 'question' or session.attributes['state'] == 'tryAgain':
         if session.attributes['answer'].upper() == answer.upper():
+            if session.attributes['repetitions'] == 6:
+                correct = session.attributes['correct']
+                resetVars()
+                return question("... I'm sorry, that's the wrong answer.  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
             session.attributes['correct'] += 1
             session.attributes['repetitions'] += 1
             session.attributes['tryAgain'] = 0

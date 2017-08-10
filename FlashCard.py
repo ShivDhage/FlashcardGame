@@ -17,7 +17,7 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill...Say change topic, change subtopic, or cancel anytime... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill created at CMU in the Summer Academy for Math and Science...Say change topic, change subtopic, or cancel anytime... Are you ready to study?'
 
     resetVars()
 

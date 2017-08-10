@@ -125,14 +125,14 @@ def check_answer(answer):
     print(answer)
     if session.attributes['state'] == 'question' or session.attributes['state'] == 'tryAgain':
         if session.attributes['answer'].upper() == answer.upper():
-            if session.attributes['repetitions'] == 6:
+            if session.attributes['repetitions'] == 5:
                 correct = session.attributes['correct']
                 resetVars()
                 return question("...Great Job,  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
             session.attributes['correct'] += 1
             session.attributes['repetitions'] += 1
             session.attributes['tryAgain'] = 0
-            if session.attributes['repetitions'] < 6:
+            if session.attributes['repetitions'] < 5:
                 return question("Good Job, that's correct." + " On to the next question..." + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
@@ -149,7 +149,7 @@ def check_answer(answer):
             try_again_msg = 'Do you want to try again?'
             if not session.attributes['state'] == 'tryAgain':
                 session.attributes['repetitions'] += 1
-            if session.attributes['repetitions'] == 6:
+            #if session.attributes['repetitions'] == 6:
 
                 if session.attributes['tryAgain'] < 2:
                     session.attributes['state'] = 'tryAgain'
@@ -158,7 +158,7 @@ def check_answer(answer):
                     correct = session.attributes['correct']
                     resetVars()
                     return question("... I'm sorry, that's the wrong answer.  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
-            if session.attributes['repetitions'] < 6:
+            if session.attributes['repetitions'] < 5:
                 if session.attributes['tryAgain'] < 2:
                     session.attributes['state'] = 'tryAgain'
                     return question("I'm sorry, that's not correct..." + " " + try_again_msg)
@@ -200,7 +200,7 @@ def all_done():
     """if session.attributes['state'] == 'question':
         return statement(session.attributes['answer'])"""
 
-    if session.attributes['state'] == 'tryAgain' and session.attributes['repetition'] == 6:
+    if session.attributes['state'] == 'tryAgain' and session.attributes['repetition'] == 5:
         correct = session.attributes['correct']
         resetVars()
         return question("...Alright. The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')

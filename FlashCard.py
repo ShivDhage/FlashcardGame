@@ -17,12 +17,13 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill created at CMU in the Summer Academy for Math and Science...Say change topic, change subtopic, or cancel anytime... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill...created at Carnegie Mellon University in the Summer Academy for Math and Science...Say change topic, change subtopic, cancel, or start over anytime... Are you ready to study?'
 
     resetVars()
 
     session.attributes['state'] = 'start'
     return question(task_msg)
+
 
 def resetVars():
     session.attributes['state'] = 'start'  # conversation state we are in
@@ -35,6 +36,7 @@ def resetVars():
     session.attributes['fileName'] = ''
     session.attributes['fileList'] = []
     session.attributes['tryAgain'] = 0
+
 
 @ask.intent("YesIntent")
 def choose_topic():
@@ -60,30 +62,30 @@ def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
         if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
-            subtopic_msg = "Great Dates...Would you like American History or World History?"
+            subtopic_msg = "Great...Dates...Would you like American History or World History?"
         elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
-            subtopic_msg = "Great Capitals...Would you like United States or World Countries?"
+            subtopic_msg = "Great...Capitals...Would you like United States or World Countries?"
         session.attributes['state'] = 'set_subtopic'
         return question(subtopic_msg)
     if session.attributes['state'] == 'set_subtopic':
         if topic.upper() == 'AMERICAN HISTORY':
-            just_checking_msg = "You've picked American History."
+            just_checking_msg = "American History it is then,... lets get started."
             session.attributes['subtopic'] = 'AMERICAN HISTORY'
             session.attributes['fileName'] = 'USDates.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD HISTORY':
-            just_checking_msg = "You've picked World History."
+            just_checking_msg = "World History it is then,... lets get started."
             session.attributes['subtopic'] = 'WORLD HISTORY'
             session.attributes['fileName'] = 'WorldHistoryDates.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         if topic.upper() == 'UNITED STATES':
-            just_checking_msg = "You've picked United States."
+            just_checking_msg = "United States it is then,... lets get started."
             session.attributes['subtopic'] = 'UNITED STATES'
             session.attributes['fileName'] = 'USCapitals.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD COUNTRIES':
-            just_checking_msg = "You've picked World Countries."
+            just_checking_msg = "World Countries it is then,... lets get started."
             session.attributes['subtopic'] = 'WORLD COUNTRIES'
             session.attributes['fileName'] = 'WorldCapitals.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
@@ -92,7 +94,7 @@ def choose_subtopic(topic):
 
 
 def ask_question():
-    index = randint(0,len(session.attributes['fileList'])-1)
+    index = randint(0, len(session.attributes['fileList'])-1)
     q, a = session.attributes['fileList'].pop(index)
     session.attributes['question'] = q
     session.attributes['answer'] = a
@@ -130,9 +132,11 @@ def check_answer(answer):
                 return question("Good Job, that's correct." + " On to the next question..." + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
-                    return statement("The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    session.attributes['state'] = 'start'
+                    return question("...Alright...The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
-                    return statement("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    session.attributes['state'] = 'start'
+                    return question("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
 
         # string interpolation %
         else:
@@ -148,14 +152,17 @@ def check_answer(answer):
                     return question("I'm sorry, that's not correct." + " The correct answer is " + session.attributes['answer'] + "... On to the next question... " + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
-                    return statement("The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    session.attributes['state'] = 'start'
+                    return question("...Alright...The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
-                    return statement("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                    session.attributes['state'] = 'start'
+                    return question("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
                 # string interpolation %
     else:
         session.attributes['state'] = 'start'
         resetVars()
-        return question("Sorry I didn't understand that. Do you wish to restart the game")
+        return question("Sorry I didn't understand that... Do you wish to restart the game")
+
 
 @ask.intent("NoIntent")
 def all_done():

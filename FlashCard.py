@@ -62,30 +62,30 @@ def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
         if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
-            subtopic_msg = "Great...Dates...Would you like American History or World History?"
+            subtopic_msg = "Great  Dates...Would you like American History or World History?"
         elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
-            subtopic_msg = "Great...Capitals...Would you like United States or World Countries?"
+            subtopic_msg = "Great  Capitals...Would you like United States or World Countries?"
         session.attributes['state'] = 'set_subtopic'
         return question(subtopic_msg)
     if session.attributes['state'] == 'set_subtopic':
         if topic.upper() == 'AMERICAN HISTORY':
-            just_checking_msg = "American History it is then,... lets get started."
+            just_checking_msg = " Ok, American History... lets get started."
             session.attributes['subtopic'] = 'AMERICAN HISTORY'
             session.attributes['fileName'] = 'USDates.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD HISTORY':
-            just_checking_msg = "World History it is then,... lets get started."
+            just_checking_msg = " Ok, World History... lets get started."
             session.attributes['subtopic'] = 'WORLD HISTORY'
             session.attributes['fileName'] = 'WorldHistoryDates.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         if topic.upper() == 'UNITED STATES':
-            just_checking_msg = "United States it is then,... lets get started."
+            just_checking_msg = " Ok, United States... lets get started."
             session.attributes['subtopic'] = 'UNITED STATES'
             session.attributes['fileName'] = 'USCapitals.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])
         elif topic.upper() == 'WORLD COUNTRIES':
-            just_checking_msg = "World Countries it is then,... lets get started."
+            just_checking_msg = " Ok, World Countries... lets get started."
             session.attributes['subtopic'] = 'WORLD COUNTRIES'
             session.attributes['fileName'] = 'WorldCapitals.txt'
             session.attributes['fileList'] = get_question(session.attributes['fileName'])

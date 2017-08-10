@@ -11,7 +11,7 @@ What year did the French Revolution begin in?+1789
 What year did the Congress of Vienna take place in?+1815	
 In which year did the Opium War begin?+1839
 In what year did the Chinese Revolution begin?+1911 
-In what year did the Russian Revolution?+1917
+In what year did the Russian Revolution happen?+1917
 In which year did the Treaty of Versailles take place?+1919
 In which year did the United States stock market crash?+1929
 What year did World War 2 end in?+1945	

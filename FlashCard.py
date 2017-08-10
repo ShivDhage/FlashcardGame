@@ -17,20 +17,24 @@ ask = Ask(app, "/")
 def start_flashcards():
 
     session.attributes['welcome'] = 1
-    task_msg = 'Welcome to the Flash Card Skill...Say change topic, change subtopic, or cancel, pause, resume, or restart anytime... Are you ready to study?'
+    task_msg = 'Welcome to the Flash Card Skill...Say change topic, change subtopic, or cancel anytime... Are you ready to study?'
 
-    session.attributes['state'] = 'start'  # conversation state we are in
-    session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
-    session.attributes['correct'] = 0  # how many flashcards the user got correct
-    session.attributes['topic'] = ''  # the topic the user has chosen
-    session.attributes['subtopic'] = ''  # the subtopic the user has chosen
-    session.attributes['fileName'] = ''
-    session.attributes['fileList'] = []
-    session.attributes['tryAgain'] = 0 
+    resetVars()
 
     session.attributes['state'] = 'start'
     return question(task_msg)
 
+def resetVars():
+    session.attributes['state'] = 'start'  # conversation state we are in
+    session.attributes['repetitions'] = 0  # how many times you have repeated the skill in one session
+    session.attributes['correct'] = 0  # how many flashcards the user got correct
+    session.attributes['question'] = ''
+    session.attributes['answer'] = ''
+    session.attributes['topic'] = ''  # the topic the user has chosen
+    session.attributes['subtopic'] = ''  # the subtopic the user has chosen
+    session.attributes['fileName'] = ''
+    session.attributes['fileList'] = []
+    session.attributes['tryAgain'] = 0
 
 @ask.intent("YesIntent")
 def choose_topic():
@@ -56,10 +60,10 @@ def choose_subtopic(topic):
     if session.attributes['state'] == 'set_topic':
         if topic.upper() == 'DATES':
             session.attributes['topic'] = 'DATES'
-            subtopic_msg = "You've picked dates.  Would you like American History or World History?"
+            subtopic_msg = "Great Dates...Would you like American History or World History?"
         elif topic.upper() == 'CAPITALS':
             session.attributes['topic'] = 'CAPITALS'
-            subtopic_msg = "You've picked capitals.  Would you like United States or World Countries?"
+            subtopic_msg = "Great Capitals...Would you like United States or World Countries?"
         session.attributes['state'] = 'set_subtopic'
         return question(subtopic_msg)
     if session.attributes['state'] == 'set_subtopic':
@@ -99,46 +103,68 @@ def ask_question():
 @ask.intent("ChangeTopicIntent")
 def change_topic_subtopic(change):
     if change.upper() == 'CHANGE TOPIC':
-        session.attributes['state'] = 'start'
-        msg = "Do you wish to change your topic? (Saying no will end the session)"
-    if change.upper() == "CHANGE SUBTOPIC":
         session.attributes['state'] = 'set_topic'
-        msg = "Do you wish to change your subtopic"
+        resetVars()
+        msg = "sure...Which topic would you like: Dates or Capitals"
+    if change.upper() == "CHANGE SUBTOPIC":
+        session.attributes['state'] = 'set_subtopic'
+        topic = session.attribute['topic']
+        resetVars()
+        session.attributes['topic'] = topic
+        if session.attributes['topic'].upper() == "DATES":
+            msg = "sure...Would you like American History or World History?"
+        elif session.attributes['topic'].upper() == "CAPITALS":
+            msg = "sure...Would you like United States or World Countries?"
     return question(msg)
 
 
 @ask.intent("CheckAnswerIntent")
 def check_answer(answer):
-    if session.attributes['answer'] == answer:
-        session.attributes['correct'] += 1
-        session.attributes['repetitions'] += 1
-        if session.attributes['repetitions'] < 5:
-            return question("True." + " " + ask_question())
-        else:
-            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
-    # string interpolation %
-    else:
-        try_again_msg = 'Do you want to try again?'
-        session.attributes['repetitions'] += 1
-        if session.attributes['repetitions'] < 5:
-            if session.attributes['tryAgain'] < 2:
-                session.attributes['state'] = 'tryAgain'
-                return question("False." + " " + try_again_msg)
+    print(answer)
+    if session.attributes['state'] == 'question' or session.attributes['state'] == 'tryAgain':
+        if session.attributes['answer'].upper() == answer.upper():
+            session.attributes['correct'] += 1
+            session.attributes['repetitions'] += 1
+            session.attributes['tryAgain'] = 0
+            if session.attributes['repetitions'] < 6:
+                return question("Good Job, that's correct." + " On to the next question..." + ask_question())
             else:
-                return question("False." + " " + ask_question())
-        else:
-            return statement("Your correct number of answers is " +str(session.attributes['correct']) + '. Goodbye.')
-            # string interpolation %
+                if session.attributes['correct'] <= 2:
+                    return statement("The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                elif session.attributes['correct'] > 2:
+                    return statement("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
 
+        # string interpolation %
+        else:
+            try_again_msg = 'Do you want to try again?'
+            if not session.attributes['state'] == 'tryAgain':
+                session.attributes['repetitions'] += 1
+            if session.attributes['repetitions'] < 6:
+                if session.attributes['tryAgain'] < 2:
+                    session.attributes['state'] = 'tryAgain'
+                    return question("I'm sorry, that's not correct..." + " " + try_again_msg)
+                else:
+                    session.attributes['tryAgain'] = 0
+                    return question("I'm sorry, that's not correct." + " The correct answer is " + session.attributes['answer'] + "... On to the next question... " + ask_question())
+            else:
+                if session.attributes['correct'] <= 2:
+                    return statement("The study session is done. Your correct number of answers is " +str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                elif session.attributes['correct'] > 2:
+                    return statement("...Great Job...The study session is done. Your correct number of answers is " + str(session.attributes['correct']) + 'out of five...Do you want to play again.')
+                # string interpolation %
+    else:
+        session.attributes['state'] = 'start'
+        resetVars()
+        return question("Sorry I didn't understand that. Do you wish to restart the game")
 
 @ask.intent("NoIntent")
 def all_done():
     if session.attributes['state'] == 'start':
         session.attributes['state'] = 'end'
-        msg = "Oh well, you could have studied for once in your life ... Goodbye."
+        msg = "Please come back to study soon... Goodbye!."
         return statement(msg)
 
-    if session.attributes['state'] == 'check_topic':
+    """if session.attributes['state'] == 'check_topic':
         session.attributes['state'] = 'start'
         msg = "Do you wish to change your topic?"
         return question(msg)
@@ -146,45 +172,37 @@ def all_done():
     if session.attributes['state'] == 'check_subtopic':
         session.attributes['state'] = 'check_topic'
         msg = "Do you wish to change your subtopic"
-        return question(msg)
+        return question(msg)"""
 
-    if session.attributes['state'] == 'question':
-        return statement(session.attributes['answer'])
+    """if session.attributes['state'] == 'question':
+        return statement(session.attributes['answer'])"""
     
     if session.attributes['state'] == 'tryAgain':
-        return question(ask_question())
+        return question("Alright, next question..." + ask_question())
 
 
 @ask.intent("AMAZON.CancelIntent")
 def end_game():
-    end_msg = "Thanks for playing"
+    end_msg = "Thanks for playing...Goodbye"
     return statement(end_msg)
-
-
-@ask.intent("AMAZON.PauseIntent")
-def pause_game():
-    return 42
-
-
-@ask.intent("AMAZON.ResumeIntent")
-def resume_game():
-    return 42
 
 
 @ask.intent("AMAZON.StartOverIntent")
 def repeat_game():
-    return 42
+    session.attributes['state'] = 'start'
+    resetVars()
+    return question("Do you wish to start over (Saying no will end the study session)")
 
 
 def get_question(file_name):
     with open(file_name, 'r', encoding='utf-8') as f:
         lines = f.readlines()
     qa = [tuple(qa.strip().split('+')) for qa in lines]
-    index = randint(0,24)
+    """index = randint(0,24)
     q = qa[index][0]
     a = qa[index][1]
     session.attributes['answer'] = a
-    session.attributes['state'] = 'question'
+    session.attributes['state'] = 'question'"""
     return qa
 
 if __name__ == '__main__':

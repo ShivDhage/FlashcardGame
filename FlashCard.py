@@ -150,6 +150,7 @@ def check_answer(answer):
             if not session.attributes['state'] == 'tryAgain':
                 session.attributes['repetitions'] += 1
             if session.attributes['repetitions'] == 6:
+
                 if session.attributes['tryAgain'] < 2:
                     session.attributes['state'] = 'tryAgain'
                     return question("I'm sorry, that's not correct..." + " " + try_again_msg)
@@ -198,7 +199,12 @@ def all_done():
 
     """if session.attributes['state'] == 'question':
         return statement(session.attributes['answer'])"""
-    
+
+    if session.attributes['state'] == 'tryAgain' and session.attributes['repetition'] == 6:
+        correct = session.attributes['correct']
+        resetVars()
+        return question("...Alright. The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
+
     if session.attributes['state'] == 'tryAgain':
         return question("Alright, next question..." + ask_question())
 

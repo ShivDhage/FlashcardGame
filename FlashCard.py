@@ -200,7 +200,7 @@ def all_done():
     """if session.attributes['state'] == 'question':
         return statement(session.attributes['answer'])"""
 
-    if session.attributes['state'] == 'tryAgain' and session.attributes['repetition'] == 5:
+    if session.attributes['state'] == 'tryAgain' and session.attributes['repetitions'] == 5:
         correct = session.attributes['correct']
         resetVars()
         return question("...Alright. The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')

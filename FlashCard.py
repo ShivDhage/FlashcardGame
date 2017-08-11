@@ -104,6 +104,9 @@ def ask_question():
 
 @ask.intent("ChangeTopicIntent")
 def change_topic_subtopic(change):
+    if not (session.attributes['state'] == 'question' or session.attributes['state'] == 'tryAgain'):
+        resetVars()
+        return question("Sorry, I didn't understand that... Do you wish to restart the game")
     if change.upper() == 'CHANGE TOPIC':
         resetVars()
         session.attributes['state'] = 'set_topic'
@@ -128,7 +131,7 @@ def check_answer(answer):
             if session.attributes['repetitions'] == 5:
                 correct = session.attributes['correct']
                 resetVars()
-                return question("...Great Job,  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
+                return question(" That's correct...Great Job,  The study session is now done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
             session.attributes['correct'] += 1
             session.attributes['repetitions'] += 1
             session.attributes['tryAgain'] = 0
@@ -138,11 +141,11 @@ def check_answer(answer):
                 if session.attributes['correct'] <= 2:
                     correct = session.attributes['correct']
                     resetVars()
-                    return question("...Alright,  The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
+                    return question(" That's correct...Alright,  The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
                     correct = session.attributes['correct']
                     resetVars()
-                    return question("...Great Job,  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
+                    return question(" That's correct...Great Job,  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
 
         # string interpolation %
         else:
@@ -164,16 +167,16 @@ def check_answer(answer):
                     return question("I'm sorry, that's not correct..." + " " + try_again_msg)
                 else:
                     session.attributes['tryAgain'] = 0
-                    return question("I'm sorry, that's not correct." + " The correct answer is " + session.attributes['answer'] + "... On to the next question... " + ask_question())
+                    return question(" I'm sorry, that's not correct." + " The correct answer is " + session.attributes['answer'] + "... On to the next question... " + ask_question())
             else:
                 if session.attributes['correct'] <= 2:
                     correct = session.attributes['correct']
                     resetVars()
-                    return question("...Alright. The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
+                    return question(" I'm sorry, that's not correct...Alright. The study session is done. Your correct number of answers is " +str(correct) + 'out of five...Do you want to play again.')
                 elif session.attributes['correct'] > 2:
                     correct = session.attributes['correct']
                     resetVars()
-                    return question("...Great Job.  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
+                    return question(" I'm sorry, that's not correct...Great Job.  The study session is done. Your correct number of answers is " + str(correct) + 'out of five...Do you want to play again.')
                 # string interpolation %
     else:
         resetVars()
